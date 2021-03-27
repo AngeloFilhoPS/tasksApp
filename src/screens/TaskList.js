@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {View,Text, ImageBackground,StyleSheet,StatusBar} from 'react-native'
+import {View,Text, ImageBackground,StyleSheet,StatusBar,FlatList} from 'react-native'
 import moment from "moment";
 import 'moment/locale/pt-br'
 import todayImage from '../../assets/imgs/today.jpg'
@@ -8,6 +8,29 @@ import Task from "../components/Task";
 
 
 export default class TaskList extends Component{
+    state ={
+        task:[{
+            id:Math.random(),
+            desc:'Comprar Livro',
+            estimateAt: new Date(),
+            doneAt: new Date(),
+        },{
+            id:Math.random(),
+            desc:'Ler Livro',
+            estimateAt: new Date(),
+            doneAt: null,
+        }]
+    }
+    toggleTask = taskId =>{
+        const tasks = [...this.state.task]
+        tasks.forEach(task=>{
+            if(task.id===taskId){
+                task.doneAt = task.doneAt ? null : new Date()
+            }
+        })
+
+        this.setState({tasks})
+    }
 
     render() {
 
@@ -26,12 +49,11 @@ export default class TaskList extends Component{
                 </ImageBackground>
                 <View style={styles.taskList}>
 
-                    <Task desc="Comprar Livro"
-                          estimateAt={new Date()}
-                          doneAt={new Date()}/>
-                    <Task desc="Ler Livro"
-                          estimateAt={new Date()}
-                          doneAt={null}/>
+              <FlatList
+                data={this.state.task}
+                keyExtractor={item=>`${item.id}`}
+                renderItem={({item})=><Task{...item} toggleTask={this.toggleTask}/>}
+              />
 
                 </View>
             </View>
